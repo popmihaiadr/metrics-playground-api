@@ -13,7 +13,12 @@ const {Pool} = pkg;
   const database = process.env.DB_NAME || '';
   const secret_name = process.env.secret_name || '';  
   const region= process.env.region || '';  
-
+  const dbConfig={
+    user: 'postgres',
+      host, 
+      password,
+      port: 5432,
+     };
 const client = new SecretsManagerClient({
   region,
 });
@@ -52,13 +57,7 @@ export const handler = async(event,context) => {
   console.log(event);
   if (event.httpMethod == 'GET') {
     try {
-      const pool = new Pool({
-    user: 'postgres',
-      host,
-      // database:'public' , 
-      password,
-      port: 5432,
-     });
+      const pool = new Pool(dbConfig);
 
 
 const results = await pool.query('SELECT * from "users"');
@@ -81,13 +80,7 @@ console.log('user:', results.rows);
     const { name, jira_id } = JSON.parse(event.body);
     console.log(name,jira_id);
     try {
-      const pool = new Pool({
-    user: 'postgres',
-      host,
-      // database:'public' , 
-      password,
-      port: 5432,
-     });
+      const pool = new Pool(dbConfig);
 
 
 const results = await pool.query("INSERT INTO users VALUES ( nextval('id_sequence'),$1 ,$2);",[name,jira_id]);
@@ -105,10 +98,10 @@ const results = await pool.query("INSERT INTO users VALUES ( nextval('id_sequenc
     }
   }
   
-  // return {
-  //   statusCode: 400,
-  //   body: JSON.stringify('Invalid HTTP method'),
-  // };
+  return {
+    statusCode: 400,
+    body: JSON.stringify('Invalid HTTP method'),
+  };
 };
 
 
