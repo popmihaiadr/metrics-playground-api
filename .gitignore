@@ -1,0 +1,9 @@
+/node_modules/
+.vscode
+
+# Used in local development
+.sts_assume_role.sh
+.env 
+
+# Used in local development, to call lambda
+.index.js 
